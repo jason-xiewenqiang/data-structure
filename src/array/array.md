@@ -84,3 +84,15 @@
 + shift
 
 ###### ES6新增数组功能
++ Array.isArray()
++ Array.includes()
++ Array.from()
++ Array.of
++ Array.keys
++ Array.values
++ Array.find
++ Array.findIndex
++ Array.entries
++ Array.fill
++ Array.copyWith
++ @@Iterator
