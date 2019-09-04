@@ -63,3 +63,24 @@
 // 二维数组和三维（多维）数组不做讨论
 
 ###### JavaScript中数组其他的操作方法汇总
+###### JavaScript中数组其他的操作方法汇总
++ concat
++ every
++ filter
++ some
++ forEach
++ join
++ indexof
++ lastIndexof
++ map
++ slice
++ reverse
++ sort
++ valueOf
++ toString
++ pop 
++ push
++ unshift
++ shift
+
+###### ES6新增数组功能
