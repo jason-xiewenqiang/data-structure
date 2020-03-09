@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <pre>
+        // 集合的一些概念和操作
+        并集 A U B 
+        this.union = function(otherSet) {
+            let unionSet = new Set()
+
+            let values = this.values()
+            for (let i = 0; i < values.length; i++) {
+                unionSet.add(values[i])
+            }
+            values = otherSet.values()
+            for (let i = 0; i < values.length; i++) {
+                unionSet.add(values[i])
+            }
+            return unionSet
+        }
+
+        交集 
+        this.intersection = function(otherSet) {
+            let intersectionSet = new Set()
+            let values = this.values()
+            for (let i = 0; i < values.length; i ++) {
+                if (otherSet.has(values[i])) {
+                    intersectionSet.add(values[i])
+                }
+            }
+            return intersectionSet
+        }
+
+        差集
+        this.difference = function(otherSet) {
+            let differenceSet = new Set()
+            let values = this.values()
+            for (let i = 0; i < values.length; i++) {
+                if(!otherSet.has(values[i])) {
+                    differenceSet.add(values[i])
+                }
+            }
+            return differenceSet
+        }
+        子集
+        this.subset = function(otherSet) {
+            if (this.size() > otherSet.size()) {
+                return false
+            } else {
+                let values = this.values()
+                for (let i = 0; i < values.length; i++) {
+                    if (!otherSet.has(values[i])) {
+                        return false
+                    }
+                }
+                return true
+            }
+        }
+
+        /** ES6 Set **/ [Set 实例的属性和方法](https://es6.ruanyifeng.com/#docs/set-map#Set)
+
+        Set 结构的实例有以下属性。
+
+        Set.prototype.constructor：构造函数，默认就是Set函数。
+        Set.prototype.size：返回Set实例的成员总数。
+        Set 实例的方法分为两大类：操作方法（用于操作数据）和遍历方法（用于遍历成员）。下面先介绍四个操作方法。
+
+        Set.prototype.add(value)：添加某个值，返回 Set 结构本身。
+        Set.prototype.delete(value)：删除某个值，返回一个布尔值，表示删除是否成功。
+        Set.prototype.has(value)：返回一个布尔值，表示该值是否为Set的成员。
+        Set.prototype.clear()：清除所有成员，没有返回值。
+
+        ```
+            // Array.from方法可以将 Set 结构转为数组
+            const items = new Set([1, 2, 3, 4, 5]);
+            const array = Array.from(items);
+
+
+
+            // 这就提供了去除数组重复成员的另一种方法
+            function dedupe(array) {
+                return Array.from(new Set(array));
+            }
+              
+            dedupe([1, 1, 2, 3]) // [1, 2, 3]
+        ```
+
+        Set 结构的实例有四个遍历方法，可以用于遍历成员。
+
+        Set.prototype.keys()：返回键名的遍历器
+        Set.prototype.values()：返回键值的遍历器
+        Set.prototype.entries()：返回键值对的遍历器
+        Set.prototype.forEach()：使用回调函数遍历每个成员
+
+    </pre>
+    <script src="Set.js"></script>
+    <script>
+        window.onload = function() {
+            let set = new Set()
+            set.add(1)
+            console.log('values', set.values())
+            console.log('has', set.has(1))
+            console.log('size', set.size())
+        }
+    </script>
+</body>
+</html>
