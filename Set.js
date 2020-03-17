@@ -1,8 +1,9 @@
 /**
  * @description 集合是由一组无序且唯一（即不能重复）的项组成的
+ * 
  */
 function Set() {
-    let items = {}
+    let items = {}  // 使用对象的结构进行操作
 
     this.has = function(value) {
         return items.hasOwnProperty(value)
