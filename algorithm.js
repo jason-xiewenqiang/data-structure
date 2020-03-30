@@ -35,6 +35,36 @@ function ArrayList() {
             }
         }
     }
+
+    // 选择排序
+    this.selectionSort = function() {
+        var length = array.length, indexMin;
+        for (var i = 0; i < length-1; i++) {
+            indexMin = i;
+            for (var y = i; y < length; y++) {
+                if (array[indexMin] > array[y]) {
+                    indexMin = y
+                }
+            }
+            if (i !== indexMin) {
+                swap(array, i, indexMin)
+            }
+        }
+    }
+
+    // 插入排序
+    this.insertionSort = function() {
+        var length = array.length, j, temp;
+        for (var i = 1; i < length; i++) {
+            j = i;
+            temp = array[i];
+            while (j>0 && array[j-1] > temp) {
+                array[j] = array[j-1];
+                j--;
+            }
+            array[j] = temp;
+        }
+    }
     
     // 交换函数
     var swap = function(array, index1, index2) {
@@ -45,9 +75,120 @@ function ArrayList() {
         // [array[index1], array[index2]] = [array[index2], array[index1]]
     }
 
+
+    // 并归排序
+    this.mergeSort = function() {
+        array = mergeSortRec(array)
+    }
+
+    var mergeSortRec = function(array) {
+        var length = array.length;
+        if (length === 1) {
+            return array
+        }
+        var mid = Math.floor(length / 2);
+        var left = array.slice(0, mid);
+        var right = array.slice(mid, length);
+        const res = merge(mergeSortRec(left), mergeSortRec(right))
+        console.log('merge result', res)
+        return res
+    }
+
+    var merge = function(left, right) {
+        console.log('left', left)
+        console.log('right', right)
+        var result = [];
+        var iLeft = 0, iRight = 0;
+        while(iLeft < left.length && iRight < right.length) {
+            if (left[iLeft] < right[iRight]) {
+                result.push(left[iLeft])
+                iLeft++
+            } else {
+                result.push(right[iRight])
+                iRight++
+            }
+        }
+        while(iLeft < left.length) {
+            result.push(left[iLeft])
+            iLeft++
+        }
+        while(iRight < right.length) {
+            result.push(right[iRight])
+            iRight++
+        }
+        return result
+    }
+
+    // 快速排序
+    this.quickSort = function() {
+        quick(array, 0, array.length - 1)
+    }
+
+    var quick = function(array, left, right) {
+        var index;
+        if (array.length > 1) {
+            index = partition(array, left, right)
+            if (left > index - 1) {
+                quick(array, left, index -1)
+            }
+            if (index < right) {
+                quick(array, index, right)
+            }
+        }
+    }
+
+    var partition = function(array, left, right) {
+        var pivot = array[Math.floor((right + left) / 2)]; // 主元
+        var i = left;
+        var j = right;
+        while(i <= j) {
+            while(array[i] < pivot) {
+                i++
+            }
+            while(array[j] > pivot) {
+                j--;
+            }
+            if (i <= j) {
+                swap(array, i, j);
+                i++;
+                j--;
+            }
+        }
+        console.log('指针', i)
+        return i
+    }
+
+    // 搜索算法
+    this.sequentialSearch = function(item) {
+        for (var i = 0; i < array.length; i++) {
+            if (item === array[i]) {
+                return i
+            }
+        }
+        return -1
+    }
+
+    // 二分搜索
+    this.binarySearch = function(item) {
+        this.quickSort();
+        var low = 0, high = array.length - 1, mid, element;
+        while(low <= high) {
+            mid = Math.floor((low + high) / 2);
+            element = array[i]
+            if (element < item) {
+                low = mid + 1;
+            } else if(element > item) {
+                high = mid -1;
+            } else {
+                return mid
+            }
+        }
+        return -1
+    }
+
 }
 
-function createNonSortedArray(size) {
+function createNotSortedArray(size) {
     var array = new ArrayList();
     for (var i = size; i > 0; i--) {
         array.insert(i)
@@ -55,7 +196,7 @@ function createNonSortedArray(size) {
     return array;
 }
 console.time('array 1')
-var array = createNonSortedArray(10);
+var array = createNotSortedArray(10);
 console.log(array.toString());
 array.bubbleSort();
 console.log('sorted', array.toString());
@@ -63,8 +204,42 @@ console.timeEnd('array 1')
 
 console.log('-----------------')
 console.time('array 2')
-var array2 = createNonSortedArray(10);
+var array2 = createNotSortedArray(10);
 console.log(array2.toString());
 array2.modifiedBubbleSort();
 console.log('sorted', array2.toString());
 console.timeEnd('array 2')
+
+console.log('-----------------')
+console.time('array 3')
+var array3 = createNotSortedArray(10);
+console.log(array3.toString());
+array3.selectionSort();
+console.log('sorted', array3.toString());
+console.timeEnd('array 3')
+
+
+console.log('-----------------')
+console.time('array 4')
+var array4 = createNotSortedArray(10);
+console.log(array4.toString());
+array4.insertionSort();
+console.log('sorted', array4.toString());
+console.timeEnd('array 4')
+
+console.log('-----------------')
+console.time('array 5')
+var array5 = createNotSortedArray(10);
+console.log(array5.toString());
+array5.mergeSort();
+console.log('sorted', array5.toString());
+console.timeEnd('array 5')
+
+console.log('-----------------')
+console.time('array 6')
+var array6 = createNotSortedArray(10);
+console.log(array6.toString());
+array6.quickSort();
+console.log('sorted', array6.toString());
+console.timeEnd('array 6')
+
