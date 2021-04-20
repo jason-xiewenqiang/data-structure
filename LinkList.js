@@ -182,3 +182,177 @@ function DoublyLinkedList() {
         }
     }
 }
+  
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+
+/**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
+ var getIntersectionNode = function(headA, headB) {
+    if (!headA || !headB) return null
+    let aSize = 0;
+    let bSize = 0;
+    let q = headA;
+    let p = headB;
+    let tem;
+    let itm;
+    while(q) {
+        aSize+=1
+        q = q.next;
+    }
+    while(p) {
+        bSize+=1
+        p = p.next;
+    }
+    if (aSize > bSize) {
+        let bet = aSize - bSize;
+        tem = headA
+        while(bet > 0) {
+            bet--
+            tem = tem.next
+        }
+        itm = headB;
+    } else if (aSize <= bSize){
+        let bet = bSize - aSize;
+        tem = headB
+        while(bet > 0) {
+            bet--
+            tem = tem.next
+        }
+        itm = headA;
+    }
+    while(tem) {
+        if (tem === itm) {
+            return itm
+        } else {
+            tem = tem.next
+            itm = itm.next
+        }
+    }
+    return null
+}; 
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} val
+ * @return {ListNode}
+ */
+ var removeElements = function(head, val) {
+    if (!head) return head
+    let dym = new ListNode(val+1, head); //不让其与val相等就行了
+    p = dym
+    while(p && p.next) {
+        if (p.next.val === val) {
+            p.next = p.next.next
+        } else {
+            p = p.next
+        }
+    }
+    return dym.next
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+ var reverseList = function(head) {
+    if (!head) return head
+    let prev = null
+    let curr = head
+    while(curr) {
+        const next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    }
+    return prev
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/** 只有一个值是 和  val相同的
+ * @param {ListNode} head
+ * @param {number} val
+ * @return {ListNode}
+ */
+ var deleteNode = function(head, val) {
+    if(head.val == val){
+        return head.next
+    }
+    head.next = deleteNode(head.next,val);
+    return head
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+ var sortList = function(head) {
+    if (!head || !head.next) return head
+    let arr = []
+    let p = head
+    while(p) {
+        arr.push(p)
+        p = p.next
+    }
+    arr = arr.sort((a, b) => a.val - b.val)
+    let dym = new ListNode(0, null)
+    p = dym
+    arr.forEach(node => {
+        let t = new ListNode(node.val, null)
+        p.next = t
+        p = t
+    })
+    return dym.next
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} node 提议就是让你做删除节点的方式
+ * @return {void} Do not return anything, modify node in-place instead.
+ */
+ var deleteNode = function(node) {
+    node.val = node.next.val
+    next.next = node.next.next  
+};
