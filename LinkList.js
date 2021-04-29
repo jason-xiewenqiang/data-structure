@@ -356,3 +356,259 @@ function DoublyLinkedList() {
     node.val = node.next.val
     next.next = node.next.next  
 };
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} list1
+ * @param {number} a
+ * @param {number} b
+ * @param {ListNode} list2
+ * @return {ListNode}  
+ * TODO: mather Fucker
+ */
+ var mergeInBetween = function(list1, a, b, list2) {
+    let dym = new ListNode(0, list1)
+    let p = dym;
+    let aPrev;
+    let bNext;
+    while (p && p.next) {
+        if (p.next.val === a) {
+            aPrev = p
+        }
+        if (p.next.val === b) {
+            bNext = p.next.next
+        }
+        p = p.next
+    }
+ 
+    let li2Last;
+    let q = list2;
+    while (q) {
+        if (!q.next) {
+            li2Last = q
+        }
+        q = q.next
+    }
+    aPrev.next = list2
+    li2Last.next = bNext
+    return dym.next
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+ var addTwoNumbers = function(l1, l2) {
+    if (!l1) return l2
+    if (!l2) return l1
+    let p = l1;
+    let q = l2;
+    let newL = new ListNode(-999, null);
+    let m = newL;
+    let rest = 0;
+    while(p || q) {
+        if (q && p) {
+            const total = p.val + q.val + rest;
+            let val;
+            if (total % 10 === total) {//取余 等于自身说明两数相加小于10
+                rest = 0;
+                val = total
+            } else {
+                rest = 1;
+                val = total - 10;
+            }
+            const nl = new ListNode(val, null);
+            m.next = nl;
+            m = nl;
+            q = q.next;
+            p = p.next;
+            if (!q && !p && rest) {
+                m.next = new ListNode(rest, null);
+            }
+        } else if (p) {
+            const total = p.val + rest;
+            let val;
+            if (total < 10) {//取余 等于自身说明两数相加小于10
+                rest = 0;
+                val = total
+            } else {
+                rest = 1;
+                val = total - 10;
+            }
+            const nl = new ListNode(val, null);
+            m.next = nl;
+            m = nl;
+            p = p.next;
+            if (!p && rest) {
+                m.next = new ListNode(rest, null);
+            }
+        } else {
+            const total = q.val + rest;
+            let val;
+            if (total % 10 === total) {//取余 等于自身说明两数相加小于10
+                rest = 0;
+                val = total
+            } else {
+                rest = 1;
+                val = total - 10;
+            }
+            const nl = new ListNode(val, null);
+            m.next = nl;
+            m = nl;
+            q = q.next;
+            if (!q && rest) {
+                m.next = new ListNode(rest, null);
+            }
+        }
+    }
+    return newL.next;
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+ var removeNthFromEnd = function(head, n) {
+    let len = 0;
+    let p = head;
+    while(p) {
+        len++;
+        p = p.next;
+    }
+    let dym = new ListNode(-999, null)
+    dym.next = head;
+    let q = dym
+    let count = 0;
+    while (q) {
+        count++;
+        if ((len - n +1) === count) {
+            q.next = q.next.next
+        }
+        q = q.next
+    }
+    return dym.next
+};
+var removeNthFromEnd1 = function(head, n) {
+    let len = 0;
+    let p = head;
+    while(p) {
+        len++;
+        p = p.next;
+    }
+    let dym = new ListNode(-999, null)
+    dym.next = head;
+    let q = dym
+    let count = 0;
+    while (q) {
+        count++;
+        if ((len - n +1) === count) {
+            q.next = q.next.next
+        }
+        q = q.next
+    }
+    return dym.next
+};
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+ var swapPairs = function(head) {
+    if (!head || !head.next) return head
+    
+    // const dummyHead = new ListNode(0);
+    // dummyHead.next = head;
+    // let temp = dummyHead;
+    // while (temp.next !== null && temp.next.next !== null) {
+    //     const node1 = temp.next;
+    //     const node2 = temp.next.next;
+    //     temp.next = node2;
+    //     node1.next = node2.next;
+    //     node2.next = node1;
+    //     temp = node1;
+    // }
+    // return dummyHead.next;
+    const dmy = new ListNode(0, head);
+    let p = dmy;
+    while (p.next && p.next.next) {
+        const node1 = p.next;
+        const node2 = p.next.next;
+        p.next = node2;
+        node1.next = node2.next;
+        node2.next = node1;
+        p = node1
+    }
+    return dmy.next
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} k
+ * @return {ListNode}
+ */
+ var swapNodes = function(head, k) {
+    if (!head || !head.next) return head;
+    let len = 0;
+    let p = head;
+    while (p) {
+        len++;
+        p = p.next;
+    }
+    let dmy = new ListNode(0,head);
+    let q = dmy
+    let count = 0;
+    let kNode;
+    let dNode;
+    while (q) {
+        count++
+        if (count === k) {
+            kNode = q;
+        }
+        if (count === len - k) {
+            dNode = q
+        }
+        q=q.next;
+    }
+    let temp = dNode.val;
+    dNode.val = kNode.val;
+    kNode.val =temp;
+
+    return dmy.next;
+};
+
