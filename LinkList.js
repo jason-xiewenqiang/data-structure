@@ -367,38 +367,49 @@ function DoublyLinkedList() {
  */
 /**
  * @param {ListNode} list1
- * @param {number} a
- * @param {number} b
+ * @param {number} a 第 a 个 
+ * @param {number} b 第 b 个
  * @param {ListNode} list2
  * @return {ListNode}  
  * TODO: mather Fucker
  */
- var mergeInBetween = function(list1, a, b, list2) {
+var mergeInBetween = function(list1, a, b, list2) {
     let dym = new ListNode(0, list1)
+    let count = -1;
     let p = dym;
-    let aPrev;
-    let bNext;
-    while (p && p.next) {
-        if (p.next.val === a) {
-            aPrev = p
+    let aNode;
+    let bNode;
+
+    while (p) {
+        count++;
+        if (count === a) {
+            aNode = p;
         }
-        if (p.next.val === b) {
-            bNext = p.next.next
+        if (count === b) {
+            bNode = p.next.next;
+            p.next = null;
+            aNode.next = bNode;
         }
-        p = p.next
+        p = p.next;
     }
- 
-    let li2Last;
+
+    aNode.next = list2;
     let q = list2;
+    let last;
     while (q) {
         if (!q.next) {
-            li2Last = q
+            last =  q;
         }
-        q = q.next
+        q=q.next;
     }
-    aPrev.next = list2
-    li2Last.next = bNext
+    last.next = bNode;
     return dym.next
+};
+// 快慢指针尝试
+var mergeInBetweenFastLow = function(list1, a, b, list2) {
+    let slow;
+    let fast;
+    const dym = new ListNode(-999, list1)
 };
 
 /**
@@ -610,5 +621,21 @@ var removeNthFromEnd1 = function(head, n) {
     kNode.val =temp;
 
     return dmy.next;
+};
+
+/**
+ * Definition for singly-linked list.   
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} x
+ * @return {ListNode}
+ */
+var partition = function(head, x) {
+    
 };
 
