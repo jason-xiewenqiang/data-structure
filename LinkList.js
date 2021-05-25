@@ -601,9 +601,9 @@ var removeNthFromEnd1 = function(head, n) {
         len++;
         p = p.next;
     }
-    let dmy = new ListNode(0,head);
+    let dmy = new ListNode(0, head);
     let q = dmy
-    let count = 0;
+    let count = -1;
     let kNode;
     let dNode;
     while (q) {
@@ -611,14 +611,14 @@ var removeNthFromEnd1 = function(head, n) {
         if (count === k) {
             kNode = q;
         }
-        if (count === len - k) {
+        if (count === len - k + 1) {
             dNode = q
         }
         q=q.next;
     }
     let temp = dNode.val;
     dNode.val = kNode.val;
-    kNode.val =temp;
+    kNode.val = temp;
 
     return dmy.next;
 };
@@ -637,5 +637,53 @@ var removeNthFromEnd1 = function(head, n) {
  */
 var partition = function(head, x) {
     
+};
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * } 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} left
+ * @param {number} right
+ * @return {ListNode}
+ */
+var reverseBetween = function(head, left, right) {
+    let dym = new ListNode(-999, head);
+    let p = dym;
+    let count = -1;
+    let prev = null;
+    while (p) {
+        count++;
+        if (count >= left && count <= right) {
+            const next = p.next;
+            prev = p;
+            p = next;
+        }else {
+            p = p.next;
+        }
+    }
+    return dym.next;
+};
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * } 合并两个有序的链表
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode} simple
+ */
+ var mergeTwoLists = function(l1, l2) {
+
 };
 
