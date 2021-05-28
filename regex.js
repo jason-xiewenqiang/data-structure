@@ -55,7 +55,7 @@ var regex5 = /\d{2,5}?/g; // 当两个能满足时 就不会再继续尝试了 *
 var string5 = '123 1234 12345 123456';
 console.log(string5.match(regex5)) // => ['12', '12', '34', '12', '34', '12', '34', '56']
 
-// 在量词后面加一个 ? 问号 就能实现惰性匹配
+// 在量词后面加一个 ? 问号 就能实现惰性匹配 尽量可能少的 匹配
 /**
  *  惰性           贪婪
  *  {m,n}?         {m,n}
@@ -64,3 +64,392 @@ console.log(string5.match(regex5)) // => ['12', '12', '34', '12', '34', '12', '3
  *  +?             +
  *  *?             *
  */
+
+/**
+ * 多选分支
+ * 表现形式如下：（p1|p2|p3）中间使用 | 管道符分隔开
+ * 分支结构是惰性的 如果前面的匹配上了 后面的就不会尝试了
+ */
+const regex6 = /good|nice/g;
+const string6 = 'good bad, nice try';
+console.log(string6.match(regex6)); // => ['good', 'nice]
+
+// 演示分支惰性匹配
+
+const regex7 = /goodbye|good/g
+const string7 = 'goodbye';
+console.log(string7.match(regex7)); // => ['goodbye']
+
+/**
+ * 一波 实战
+ */
+
+// 1、匹配16进制颜色
+// 要求命中 #ffbbab #Fc01DF #FFF #ffE
+const regexColor = /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/g
+const stringColor = '#ffbbab #Fc01DF #FFF #ffE'
+console.log(stringColor.match(regexColor)) // => ["#ffbbab", "#Fc01DF", "#FFF", "#ffE"] 
+
+// 2、匹配时间 24小时为例
+// 要求命中 23:59 02:07
+const regexTime = /([2][0-3]|[01][0-9]):([0-5][0-9])/g;
+const stringTime = '23:59 02:07';
+console.log(stringTime.match(regexTime)) // ['23:59', '02:07']
+
+// 3、window操作 系统的文件路径
+// 要求 匹配 F:\study\javascript\regex\regular expression.pdf
+// F:\study\javascript\regex\regular expression.pdf
+// F:\study\javascript\regex\
+// F:\study\javascript
+// F:\
+
+const regexFilePath = /^[a-zA-Z]:\\([^\\:*<>|"?\r\n/]+\\)*([^\\:*<>|"?\r\n/])?+/g;
+const stringFilePath = "F:\\study\\javascript\\regex\\";
+console.log(stringFilePath.test(regexFilePath)); // true
+
+// 4、匹配 html标签 的 id
+// 要求 在 <div id="container" class="container"></div> 提取出 id="container"
+const regexId = /id=".*?"/  // => 回溯 /id="[^"]*"/
+const regexHtml = '<div id="container" class="container"></div>'
+
+// Base =========== 字符匹配 end ===========
+
+
+// Base =========== 位置匹配 ===========
+
+
+// !!! 正则表达式是匹配模式 ， 要么匹配字符 要么匹配位置 !!!
+
+// 位置就是相邻字符之间的位置
+/**
+ * 匹配位置 !!! 位置是可以替换成字符的  tip: g 表示全局匹配  m 表示多行匹配
+ * 在 ES5 中有 6 个锚 ：^ $ \b \B (?=p) (?!p)
+ * ^ 匹配开头 在多行匹配行开头
+ * $ 匹配结尾 在多行匹配行结尾
+ * \b 单词边界 => \w 与 \W 之间的位置 or \w 与 ^ 之间 or \w 与 $ 之间  \w = [0-9a-zA-Z_]
+ * \B 非单词边界
+ * (?=p) p是一个字串 即p前面的位置
+ * (?!p) 与 (?=p) 相反的位置 
+ */
+
+var result = 'hello'.replace(/^|$/g, '#'); // => '#hello#'
+var result = 'I\nlike\njavascript'.replace(/^|$/gm, '#');
+/*
+#I#
+#like#
+#javascript#
+*/
+var result = '[js] lesson_01.mp4'.replace(/\b/g, '#'); // => '[#js#] #lesson_01#.#mp4#'
+var result  = '[js] lesson_01.mp4'.replace(/\B/g, '#'); // => '#[j#s]# l#e#s#s#o#n#_#1.m#p#4'
+// (?=p)
+var result = 'hello'.replace(/(?=l)/g, '#'); // => he#l#lo
+var result = 'hello'.replace(/(!=l)/g, '#'); // => #h#ell#o#
+
+/**
+ * 位置的特征 对于位置的理解 可以理解成 ''
+ * 例如 hello = '' + 'h' + '' + 'e' + '' + 'l' + '' + 'l' + '' + 'e' + ''
+ */
+
+// 不匹配任何东西 /.^/ 正则要求匹配一个字符 但该字符的后面是开头 这样的字符串是不存在的
+
+// 数字千分位分割符
+ var result = '123456789'.replace(/(?=\d{3}$)/g, ',');  //  '123456,789' 单个
+ var result = '123456789'.replace(/(?=(\d{3})+$)/g, ',');  //  ',123,456,789' 多个
+ var result = '123456789'.replace(/(?!^)(?=(\d{3})+$)/g, ',');  //  '123,456,789' 去掉开头的逗号
+ var result = '12345678 123456789'.replace(/(?!\b)(?=(\d{3})+\b)/g, ',');  //  '12,345,678 123,456,789' 多中形式
+ var result = '12345678 123456789'.replace(/\B(?=(\d{3})+\b)/g, ',');  //  '12,345,678 123,456,789' 多中形式
+
+//  格式化
+// 货币格式化 1200 => ￥ 1200.00
+var result = Number(1200).toFixed(2).replace(/\B(?=(\d{3})+\b)/g, ',').replace(/^/, '￥ ') 
+function formatRNB(num) {
+    return Number(num).toFixed(2).replace(/\B(?=(\d{3})+\b)/g, ',').replace(/^/, '￥ ');
+}
+
+// 验证密码问题
+// rule: password => length 6-12, includes Number StringUpperCase StringLowerCase, at lest 2 types of it
+
+function validPassword(psw) {
+    const regex = /((?=.*[0-9])(?=.*[a-z])|(?=.*[0-9])(?=.*[A-z])|(?=.*[A-Z])(?=.*[a-z]))^[0-9a-zA-Z]{6,12}$/;
+    return regex.test(psw);
+}
+
+console.log(validPassword('1234'))
+console.log(validPassword('123412344534543534'))
+console.log(validPassword('12345678'))
+console.log(validPassword('fdsfsdsf'))
+console.log(validPassword('FADSFDFAD'))
+console.log(validPassword('1234DF5678'))
+console.log(validPassword('1234df5678'))
+console.log(validPassword('FdsfFDF'))
+
+// 反向验证 不可以是全部为数字 不可以全部为小写字母 也不可以全部为大写字母 使用 (?!p) 
+
+function validPassword2(psw) {
+    const regex = /(?!^[0-9]{6-12}$)(?!^[a-z]{6,12}$)(?!^[A-Z]{6,12}$)^[0-9a-zA-Z]{6,12}$/;
+    return regex.test(psw);
+}
+
+console.log(validPassword('1234'))
+console.log(validPassword('123412344534543534'))
+console.log(validPassword('12345678'))
+console.log(validPassword('fdsfsdsf'))
+console.log(validPassword('FADSFDFAD'))
+console.log(validPassword('1234DF5678'))
+console.log(validPassword('1234df5678'))
+console.log(validPassword('FdsfFDF'))
+
+/**
+ * 括号 ：正则表达式括号的作用  括号 提供了分组 -- 便于我们引用它
+ */
+
+// 1、分组 连续匹配ab时  需要用到分组 如：/(ab)+/ 提供了分组 + 作用于 ab 这个整体
+var regex = /(ab)+/g
+var string1 = 'ababa abbb abababa'
+console.log(string1.match(regex)) // => ['abab', 'ab', 'ababab']
+
+// 分支结构 在多选的分支结构 (p1|p2) 提供了分支表达式的所有可能
+// I love Javascript
+// I love Regular Expression
+
+var regex = /^I love (Javascript|Regular Expression)$/
+console.log(regex.test('I love Javascript')) // true
+console.log(regex.test('I love Regular Expression')) // true
+
+//  分组引用 可以对分组进行数据提取
+// 以日期为例 yyyy-mm-dd
+
+var regex = /\d{4}-\d{2}-\d{2}/;
+var regex = /(\d{4})-(\d{2})-(\d{2})/;
+
+// 提取 年 月 日
+var string = '2021-05-27'
+console.log(string.match(regex))
+// => ["2021-05-27", "2021", "05", "27", index: 0, input: "2021-05-27", groups: undefined]
+
+// 使用 $1 - $9 来获取
+regex.test(string);
+
+RegExp.$1 // 2021
+RegExp.$2 // 05
+RegExp.$3 // 27
+
+// 替换 yyyy-mm-dd 替换 mm/dd/yyy
+var regex = /(\d{4})-(\d{2})-(\d{2})/;
+var string = '2021-05-27';
+console.log(string.replace(regex, '$2/$3/$1'))
+// =>  05/27/2021
+// 这样的做法等于 
+var result = string.replace(regex, () => `${RegExp.$2}/${RegExp.$3}/${RegExp.$1}`)
+// =>  05/27/2021
+// 这样的做法也等于 
+var result = string.replace(regex, (match, year, month, day) => `${month}/${day}/${year}`)
+// =>  05/27/2021
+
+
+// !!! 反向引用
+//  2021-5-27
+//  2021/5/27
+//  2021.5.27
+// 要求正则能符合三种格式
+var regex = /\d{4}(-|\/|\.)\d{2}(-|\/|\.)\d{2}/;
+var string1 = '2021-05-27'
+var string3 = '2021/05/27'
+var string4 = '2021.05.27'
+var string5 = '2021/05-27'
+console.log(regex.test(string1)) // true
+console.log(regex.test(string3)) // true
+console.log(regex.test(string4)) // true
+console.log(regex.test(string5)) // true  ====> 不符合预期
+
+// *** 要求 要分割符一致  修改正则表达式  \1  === (\.|\/|-) 反向引用
+
+var rightRegex = /\d{4}(\.|\/|-)\d{2}\1\d{2}/
+var string1 = '2021-05-27'
+var string3 = '2021/05/27'
+var string4 = '2021.05.27'
+var string5 = '2021/05-27'
+console.log(rightRegex.test(string1)) // true
+console.log(rightRegex.test(string3)) // true
+console.log(rightRegex.test(string4)) // true
+console.log(rightRegex.test(string5)) // false  ====> 符合预期
+
+// !!! 括号嵌套怎么办  ? 以左括号为例
+var regex = /^((\d)(\d(\d)))\1\2\3\4$/
+var string = '1231231233'
+
+regex.test(string) // true
+RegExp.$1 // 123
+RegExp.$2 // 1
+RegExp.$3 // 23
+RegExp.$4 // 3
+
+// *** \10 是表示 第十个分组 . 若引用了不存在的分组不同的浏览器表现是不一样的
+// 要匹配 \1 和 0  的话 可以使用 (?:\1)0 ro \1(/:0)
+
+// !!! 分组后面如果有量词的话会如何呢?  分组最终捕获到的数据是最后一次的匹配
+var regex = /(\d)+/
+var string = '12345'
+console.log(string.match(regex)) // => ['12345', '5', index: 0, input: '12345'] 这儿捕获的是 5
+// 对于反向引用 也是一样的
+var regex = /(\d)+ \1/
+console.log(regex.test('12345 1')) // false 
+console.log(regex.test('12345 1')) // true
+
+// *** 非捕获括号  (?:p) 和 (?:p1|p2|p3)
+var regex = /^I love (?:Javascript|Regular Expression)$/
+console.log(regex.test('I love Javascript'))
+console.log(regex.test('I love Regular Expression'))
+
+
+/**
+ * 括号 --- 分组案例
+ */
+// trim 模拟
+function trim(str) { // 使用字符匹配进行替换 效率高
+    var regex = /^\s+|\s+$/g
+    return str.replace(regex, '')
+}
+function trim1(str) { // 使用引用提取数据
+    var regex = /^\s*(.*?)\s*$/g
+    return str.replace(regex, '$1')
+}
+// 将一句话中每个单词的首字母转换为大写字母
+function myToUpperCase(sentence) {
+    return sentence.toLowerCase().replace(/(?:^|\s)\w{1}/g, c=>c.toUpperCase())
+}
+// 驼峰化 blue_sky => blueSky
+function camelize(str) {
+    return str.replace(/[-_\s]+(.)?/g, (match, c) => {
+        return c ? c.toUpperCase() : ''
+    })
+}
+camelize('nann blue')
+camelize('nann_blue')
+camelize('nann.blue')
+camelize('nann blue')
+// 逆驼峰
+function dasherize() {
+    return str.replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase()
+}
+dasherize('MozTransform')
+
+// Html 转移和反转义
+function escapeHTML(str) {
+    var escapeChars = {
+        '<': 'lt',
+        '>': 'gt',
+        '"': 'quot',
+        '&': 'amp',
+        '\'': '#39',
+    }
+    return str.replace(new RegExp(`[${Object.keys(escapeChars).join('') }]`, 'g'), match=>`&${escapeChars[match]};`)
+}
+escapeHTML('<div class="mm">Bala bala</div>')
+
+// 反转义
+function unescapeHTML(str) {
+    var htmlEntities = {
+        nbsp: ' ',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        amp: '&',
+        apos: '\''
+    }
+    // ([^;]) => 非 ; +
+    return str.replace(/\&([^;]+);/g, (match, key) => {
+        if (key in htmlEntities) {
+            return htmlEntities[key]
+        }
+        return match
+    })
+}
+
+unescapeHTML("&lt;div&gt;Bala bala&lt;/div&gt;")
+
+// 匹配成对标签 
+// <title>regular expression</title> √
+// <p>go go go</p> √
+// <title>go go go</p> ×
+// 开标签 ==> <([^>]+)>  闭标签 ==> <\/\1> 引用前面
+var regex = /<([^>]+)>[\d\D]*<\/\1>/
+var str1 = '<div>bala bala</div>'
+var str2 = '<title>bala bala</div>'
+regex.test(str1) // true
+regex.test(str2)  // false
+
+/**
+ * !!! 回溯法的原理 -- 深度优先匹配 如果存在不满足  则回到上一步继续进行匹配
+ */
+
+// 回溯法也称为试探法 从问题的 初始状态出发，搜索这种状态所能达到的所有状态，当某一个状态到了尽头时，再后退一步，再从上一个状态继续搜索
+// 其本质就是深度优先搜索算法，其中回退某一步的过程，就是回溯
+// 产生回溯的地方会发生在那些场景么？
+// 1、有贪婪量词时 例如 b{1,3} 首先会尝试 bbb, 不能匹配时，在 bb的基础上继续进行尝试 如果还不满足 则会使用 b 进行尝试
+// 如果出现了多个量词挨着时，并且相互冲突时，此时会怎么样么？ 答案是 先下手为强
+var string = '12345';
+var regex = /(\d{1,3})(\d{1,3})/
+console.log(string.match(regex));
+// => ["12345", "123", "45", index: 0, input: "12345"] 回产生回溯
+
+// 2. 惰性量词 在 贪婪量词后面加一个问好 ? 表示尽可能少的匹配
+var string = '12345';
+var regex = /(\d{1,3}?)(\d{1,3})/
+console.log(string.match(regex));
+// => ["1234", "1", "234", index: 0, input: "12345"] 同样也会产生回溯
+
+// 3.分支结构也是惰性的 当前面的分支没有匹配上时 后面的分支会继续尝试 所以 ***这样的尝试也是一种回溯***
+
+/**
+ * !!! 总结
+ * *** 贪婪量词：买衣服砍价 => 价钱太高了，便宜点，不行，再便宜点儿
+ * *** 惰性量词：卖东西加价 => 给太少了，再加点儿行不行，还是少了，再给点儿
+ * *** 分支结构：货比三家 => 这家不行，换一家，还不行，再换
+ * !!! SHIT
+ */
+
+// *** 拆解 分支结构 如何读懂别人写的正则表达式 （结构 & 操作符）
+
+/** 结构
+ * !!! 都有哪一些结构呢
+ * !!! 字符字面量  匹配具体的字符
+ * !!! 字符组 匹配一个字符 也可以多中可能之一 [0-9]
+ * !!! 量词 表示一个连续出现的字符 a{1,3} a+  
+ * !!! 锚 匹配位置  ^ $ \b \B
+ * !!! 分组 表示一个整体 (ab)+ or ... 非捕获分组 (?:ab)+
+ * !!! 分支 多个子表达式之一 abc|bcd
+ * !!! 结构
+ */
+
+/** 操作符 优先级从上到下
+ * !!! 操作符
+ * !!! 转义符           \
+ * !!! 括号和方括号     () or []
+ * !!! 量词限定符       {m} {m,n} {m,} ? * +
+ * !!! 位置和序列       ^ $ \元字符 一般字符
+ * !!! 管道符           |
+ */
+
+// *** 要点一：匹配字符串的整体问题 
+var regex1 = /^abc|bcd$/
+var regex2 = /^(abc|bcd)$/
+// *** 要点二：量词连缀问题
+// 匹配 a b c 任意一个 且 字符长度是 3 的倍数
+var regex = /^([abc]{3})+$/
+// *** 要点三：元字符转义问题 元字符就是在正则表达式中有特殊意义的字符
+// !!! 其中包括 ^ $ . * + ? | \ / ( ) [ ] { } = ! : -
+// 1、字符组中的 元字符 和字符组相关的元字符有 [ ] ^ - 当可能引起歧义的地方都需要进行转义
+// 1、字符组中的 元字符 和字符组相关的元字符有 [ ] ^ - 当可能引起歧义的地方都需要进行转义
+var string = "^$.*+?|\\/[]{}=!:-,";
+var regex = /[\^$.*+?|\\/\[\]\{}=!:\-,]/g
+console.log(string.match(regex))
+// 2、匹配 "[abc]" 和 "{3,5}"
+var regex = /\[abc\]/  
+var regex = /\{3,5\}/
+
+/** 
+ * !!!! 案例 匹配身份证
+ */
+var regex = /^\d{17}[\dxX]$/
+
