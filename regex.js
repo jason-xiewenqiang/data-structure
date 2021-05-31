@@ -453,3 +453,211 @@ var regex = /\{3,5\}/
  */
 var regex = /^\d{17}[\dxX]$/
 
+/** 
+ * !!!! 案例 匹配IPV4 => 3位数.3位数.3位数.3位数
+ */
+ var regex = /^((0{0,2}\d|0?\d{2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(0{0,2}\d|0?\d{2}|1\d{2}|2[0-4]\d|25[0-5])$/
+ var ipv4 = '192.168.0.89'
+ console.log(regex.test(ipv4))
+
+
+/**
+ * !!! 正则表达式的构建
+ * !!! 1、平衡法则 
+ *      匹配预取字符串
+ *      不匹配非预取字符串
+ *      可读性和可维护行
+ *      效率
+ * !!! 2、构建前提
+ *      能不能用正则
+ *      有没有必要使用正则
+ *      有没有必要构建一个复杂的正则表达式 -- 拆分成小正则去做也行
+ * !!! 3、准确性
+ *      匹配固定电话
+ *      055118888888  => /^0\d{2,3}[1-9]{6,7}$/
+ *      0551-18888888 => /^0\d{2,3}-[1-9]{6,7}$/
+ *      (0551)18888888 => /^\(0\d{2,3}\)[1-9]{6,7}$/
+ *      合并 => /^(0\d{2,3}-?|\(0\d{2,3}\))[1-9]{6,7}$/ 
+ *      匹配浮点数
+ *      1.12 +1.12 -1.121   => 
+ *      10 +10 -10 =>
+ *      .2 +.2 -.2 =>
+ *      [+-] vs \d+ vs  \.\d+
+ *      ===>>>> /^[+-]?(\d+\.\d+|\d+|\.\d+)$/
+ * !!! 4、效率
+ *      清除回溯
+ *      使用非捕获分组
+ *      独立出确定字符
+ *      提取分支 公共部分
+ *      减少分支数量 缩小他们的范围
+ */
+
+// *** 正则表单式的操作 API
+
+// !!! 验证 切分 提取 替换
+
+// 验证
+var regex = /\d/;
+var string = 'abcd123';
+console.log(!!~string.search(regex))   // 4  位置（0开始）如果没有匹配上 -1
+console.log(regex.test(string))       // true 布尔值 false
+console.log(!!string.match(regex))    // ["1", index: 4, input: "abcd123", groups: undefined] null
+console.log(!!regex.exec(string))     // ["1", index: 4, input: "abcd1", groups: undefined] null
+
+// 切分 split 
+var string = '2021-5-31';
+console.log(string.split(/\D/))
+console.log('2021-5-31'.split(/\D/))
+
+//  ** 提取 通常使用  分组引用 分组捕获
+var regex = /^(\d{4})\D(\d{2})\D(\d{2})$/
+var string = '2021-05-31'
+console.log(string.match(regex)) // ["2021-05-31", "2021", "05", "31", index: 0, input: "2021-05-31", groups: undefined]
+console.log(string.exec(regex)) // ["2021-05-31", "2021", "05", "31", index: 0, input: "2021-05-31", groups: undefined]
+regex.test(string)
+console.log(RegExp.$1) // 2021
+console.log(RegExp.$2) // 05
+console.log(RegExp.$3) // 31
+string.search(regex)
+console.log(RegExp.$1) // 2021
+console.log(RegExp.$2) // 05
+console.log(RegExp.$3) // 31
+var date = []
+string.replace(regex, (match, year, month, day) => {
+    date.push(year, month, day)
+})
+console.log(date)
+
+// ** 替换
+var string = '2021-05-31'
+var today = new Date(string.replace(/-/g, '/'))
+console.log(today) // Mon May 31 2021 00:00:00 GMT+0800 (中国标准时间)
+
+// !!! 操作
+// String#search
+// String#split
+// String#match
+// String#replace
+// RegExp#test
+// RegExp#exec
+
+// search 与 match 参数问题 search & match 会把字符串转换为正则
+var  string = '2021.05.31'
+console.log(string.search('.')) // ===> 0
+console.log(string.match('.')) // ['2', index: 0, input: '2021.05.31']
+// !!! 也就是将传入的字符串当成了正则
+console.log(string.search(/\./)) // 4
+console.log(string.search("\\."))  // 4
+
+console.log(string.match(/\./)) // [".", index: 4, input: "2021.05.31", groups: undefined]
+console.log(string.match("\\."))  // [".", index: 4, input: "2021.05.31", groups: undefined]
+
+console.log(string.replace('.', '/')) // ==> 2021/05/31
+
+// match 返回结果的格式问题  与 修饰符 g 相关
+var string = '2021.05.31'
+var regex1 = /\b(\d+)\b/;
+var regex2 = /\b(\d+)\b/g;
+console.log(string.match(regex1))  // ["2021", "2021", index: 0, input: "2021.05.31", groups: undefined]
+console.log(string.match(regex2))  // ["2021", "05", "31"]
+// !!! 没有g返回的标准匹配格式   而有 g 时 返回的是所有匹配内容  当没有匹配时 不管有没有g返回的都是null
+
+// exec 比 match 更强大
+// ** 当正则没有 g 时，使用match返回的信息比较多，但是使用了 g 之后，就没有关键的index了 而这是exec就可以解决这个问题
+var string = '2021.05.31'
+var regex3 = /\b(\d+)\b/g
+console.log(regex3.exec(string)) 
+console.log(regex3.lastIndex)
+console.log(regex3.exec(string))
+console.log(regex3.lastIndex)
+console.log(regex3.exec(string))
+console.log(regex3.lastIndex)
+console.log(regex3.exec(string))
+console.log(regex3.lastIndex)
+
+// !!! lastIndex 表示下一次匹配开始的位置
+// ["2021", "2021", index: 0, input: "2021.05.31", groups: undefined]
+// 4
+// ["05", "05", index: 5, input: "2021.05.31", groups: undefined]
+// 7
+// ["31", "31", index: 8, input: "2021.05.31", groups: undefined]
+// 10
+// null
+// 0
+
+/**
+ * !!! 修饰符 g 对exec与test的影响 
+ * !!! 字符串的四个方法 lastIndex 都不会被修改
+ * !!!  String#search  
+ * !!!  String#split  
+ * !!!  String#match
+ * !!!  String#replace
+ * !!!  BUT 对于 exec 和 test 当时全局匹配时（有g），每一次匹配完成后都会修改lastIndex
+ */
+var regex = /a/g
+console.log(regex.test('a'), regex.lastIndex)
+console.log(regex.test('aba'), regex.lastIndex)
+console.log(regex.test('ababc'), regex.lastIndex)
+
+// true 1
+// true 3
+// false 0
+
+var regex = /a/
+console.log(regex.test('a'), regex.lastIndex)
+console.log(regex.test('aba'), regex.lastIndex)
+console.log(regex.test('ababc'), regex.lastIndex)
+
+// 每次从 0
+// true 0
+// true 0
+// true 0
+
+/**
+ * !!! test 整体匹配时需要使用 ^ 和 $
+ */
+
+console.log(/123/.test('a123b'))   // true
+console.log(/^123$/.test('a123b')) // false
+console.log(/^123$/.test('123'))   // true
+
+/**
+ * !!! split 相关参数
+ * 1、如果有第二个参数 表示结果数组最大长度
+ */
+var string = 'html,css,js'
+console.log(string.split(/,/, 2)) // ["html", "css"]
+
+/**
+ * !!! split 相关参数
+ * 2、使用了分组时 结果时包含分隔符
+ */
+ var string = 'html,css,js'
+ console.log(string.split(/(,)/, 2)) // ["html", ",", "css", ",", "js"]
+
+/**
+ * !!! replace 的强大 假借替换知名进行其他操作
+ */
+var result = '2,3,5'
+console.log(result.replace(/(\d+),(\d+),(\d+)/, '$3=$2+$1')) // 5=3+2
+console.log(result.replace(/(\d+)/, '$&$&$&')) // 222,333,555
+
+'1234 2345 3456'.replace(/(\d)\d{2}(\d)/g, (match, $1, $2, index, input) => {
+    console.log(match, $1, $2, index, input)
+})
+
+// !!! 不推荐使用 new RegExp进行正则构造   因为要多写很多  \ 进行转义
+
+// !!! 修饰符 
+// ** g 全局匹配 global
+// ** i 忽略字母大小写 ignoreCase
+// ** m 多行匹配 只影响 ^ $ multiline
+// ** source 属性 动态构建时传入new RegExp的字符串
+
+// !!!! 不常用属性 不考虑了
+
+var utils = {}
+'Boolean|Number|String|Function|Array|Date|RegExp|Object|Error'.split('|').forEach(item=> {
+    utils[`is${item}`] = obj => Object.prototype.toString.call(obj) === `[object ${item}]`
+})
+console.log(utils.isArray([1,2,3]))
