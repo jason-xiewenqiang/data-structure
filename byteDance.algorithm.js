@@ -118,4 +118,43 @@ reverseWords('a good  example');
 
 pivotIndex([1, 7, 3, 6, 5, 6])
 
+/**
+ * @param {number[]} nums   [1,3,5,6], 5   [1,3,5,6], 0
+ * @param {number} target
+ * @return {number}
+ */
+ var searchInsert = function(nums, target) {
+    const index = nums.indexOf(target)
+    if (index > -1) return index
+    let i = 0
+    for (; i < nums.length; i++) {
+        if (nums[i] >= target) {
+            break;
+        }
+    }
+    nums.splice(i, 0, target)
+    return i
+};
+
+searchInsert([1,3,5,6], 5)
+searchInsert([1,3,5,6], 0)
+
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+
+};
+
+/** 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+// 输入: nums = [1,1,1,2,2,3], k = 2
+// 输出: [1,2]
+ var topKFrequent = function(nums, k) {
+
+};
 
